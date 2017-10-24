@@ -1,0 +1,9 @@
+name: nuid
+version: 0.1.0
+description: >
+  A Dart-lang implementation of NATS Unique Identifiers
+author: Frank Moreno <frankmoreno1993@gmail.com>
+homepage: http://www.github.com/kranfix/dart-nuid
+documentation: http://www.github.com/kranfix/dart-nuid#readme
+dependencies:
+  crypto: "^2.0.2+1"
