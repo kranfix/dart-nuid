@@ -6,26 +6,27 @@
 library nuid;
 
 import 'dart:math' as Math;
+import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 
 const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const int base = 36;
 const int preLen = 12;
 const int seqLen = 10;
-const int maxSeg = 3656158440062976;  // base^seqLen == 36^10
+const int maxSeq = 3656158440062976;  // base^seqLen == 36^10
 const int minInc   = 33;
 const int maxInc   = 333;
 const int totalLen = preLen + seqLen;
 
 class Nuid {
-  byte[] buf;
+  var buf;
+  num seq;
+  num inc;
 
   // Create and initialize a nuid.
   Nuid(){
-    this.buf = new Buffer(totalLen);
-    this._setPre();
-    this._initSeqAndInc();
-    this._fillSeq();
+    this.buf = new Uint8List(totalLen);
+    this._init();
   }
 
   // Initializes a nuid with a crypto random prefix,
@@ -41,38 +42,39 @@ class Nuid {
 
   // Initializes the pseudo randmon sequence number and the increment range.
   void _initSeqAndInc() {
-    this.seq = Math.floor(Math.random() * maxSeq);
-    this.inc = Math.floor(Math.random() * (maxInc-minInc)+minInc);
+    var rng = new Math.Random();
+    this.seq = (rng.nextDouble() * maxSeq).floor();
+    this.inc = rng.nextInt(maxInc-minInc) + minInc;
   }
 
   // Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
-    var cbuf = crypto.randomBytes(preLen);
+    /*var cbuf = crypto.randomBytes(preLen);
     for (var i = 0; i < preLen; i++) {
       var di = cbuf[i] % base;
-      this.buf[i] = digits.charCodeAt(di);
-    }
+      this.buf[i] = digits.codeUnitAt(di);
+    }*/
   }
 
   // Fills the sequence part of the nuid as base36 from this.seq.
   void _fillSeq() {
     var n = this.seq;
     for (var i = totalLen-1; i >= preLen; i--) {
-      this.buf[i] = digits.charCodeAt(n%base);
-      n = Math.floor(n/base);
+      this.buf[i] = digits.codeUnitAt(n % base);
+      n = (n/base).floor();
     }
   }
 
   // Returns the next nuid
-  static void next() {
+  String next() {
     this.seq += this.inc;
     if (this.seq > maxSeq) {
-      this.setPre();
-      this.initSeqAndInc();
+      this._setPre();
+      this._initSeqAndInc();
     }
-    this.fillSeq();
+    this._fillSeq();
+    return this.buf.toString();
   }
-    return (this.buf.toString('ascii'));
 }
 
 
