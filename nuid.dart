@@ -7,7 +7,6 @@ library nuid;
 
 import 'dart:math' as Math;
 import 'dart:typed_data';
-import 'package:crypto/crypto.dart';
 
 const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const int base = 36;
@@ -49,11 +48,11 @@ class Nuid {
 
   // Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
-    /*var cbuf = crypto.randomBytes(preLen);
+    var rs = new Math.Random.secure();
     for (var i = 0; i < preLen; i++) {
-      var di = cbuf[i] % base;
+      var di = rs.nextInt(21701) % base;
       this.buf[i] = digits.codeUnitAt(di);
-    }*/
+    }
   }
 
   // Fills the sequence part of the nuid as base36 from this.seq.
@@ -73,7 +72,8 @@ class Nuid {
       this._initSeqAndInc();
     }
     this._fillSeq();
-    return this.buf.toString();
+    return new String.fromCharCodes(this.buf);
+    //return this.buf.toString();
   }
 }
 
