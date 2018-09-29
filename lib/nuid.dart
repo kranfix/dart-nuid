@@ -1,14 +1,14 @@
 /*!
  * Author: Frank Moreno <frankmoreno1993@gmail.com>
- * Copyright(c) 2017 Geckotronics SAC. All rights reserved.
+ * Copyright(c) 2018 ariot.pe. All rights reserved.
  * MIT Licensed
  */
 library nuid;
 
 import 'dart:math' as Math;
-import 'dart:typed_data';
 
 const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+final List<int> b_digits = digits.runes.toList();
 const int base = 36;
 const int preLen = 12;
 const int seqLen = 10;
@@ -18,37 +18,34 @@ const int maxInc   = 333;
 const int totalLen = preLen + seqLen;
 
 class Nuid {
-  var buf;
+  List<int> buf;
   num seq;
   num inc;
 
   // Create and initialize a nuid.
   Nuid(){
-    this.buf = new Uint8List(totalLen);
-    this._init();
+    this.buf = List<int>(totalLen);
+    this.reset();
   }
 
   // Initializes a nuid with a crypto random prefix,
   // and pseudo-random sequence and increment.
-  void _init(){
+  void reset(){
     this._setPre();
     this._initSeqAndInc();
     this._fillSeq();
   }
-  void reset() {
-    this._init();
-  }
 
   // Initializes the pseudo randmon sequence number and the increment range.
   void _initSeqAndInc() {
-    var rng = new Math.Random();
+    var rng = Math.Random();
     this.seq = (rng.nextDouble() * maxSeq).floor();
     this.inc = rng.nextInt(maxInc-minInc) + minInc;
   }
 
   // Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
-    var rs = new Math.Random.secure();
+    var rs = Math.Random.secure();
     for (var i = 0; i < preLen; i++) {
       var di = rs.nextInt(21701) % base;
       this.buf[i] = digits.codeUnitAt(di);
@@ -72,8 +69,17 @@ class Nuid {
       this._initSeqAndInc();
     }
     this._fillSeq();
-    return new String.fromCharCodes(this.buf);
-    //return this.buf.toString();
+    return String.fromCharCodes(this.buf);
+  }
+
+  List<int> next_bytes(){
+    this.seq += this.inc;
+    if (this.seq > maxSeq) {
+      this._setPre();
+      this._initSeqAndInc();
+    }
+    this._fillSeq();
+    return this.buf;
   }
 }
 

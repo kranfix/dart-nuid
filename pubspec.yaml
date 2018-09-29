@@ -1,5 +1,5 @@
 name: nuid
-version: 0.1.0
+version: 0.7.0
 description: >
   A Dart-lang implementation of NATS Unique Identifiers
 author: Frank Moreno <frankmoreno1993@gmail.com>
