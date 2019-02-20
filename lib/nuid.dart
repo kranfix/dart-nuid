@@ -12,9 +12,9 @@ final List<int> b_digits = digits.runes.toList();
 const int base = 36;
 const int preLen = 12;
 const int seqLen = 10;
-const int maxSeq = 3656158440062976;  // base^seqLen == 36^10
-const int minInc   = 33;
-const int maxInc   = 333;
+const int maxSeq = 3656158440062976; // base^seqLen == 36^10
+const int minInc = 33;
+const int maxInc = 333;
 const int totalLen = preLen + seqLen;
 
 class Nuid {
@@ -22,46 +22,46 @@ class Nuid {
   num seq;
   num inc;
 
-  // Create and initialize a nuid.
-  Nuid(){
+  /// Create and initialize a [Nuid].
+  Nuid() {
     this.buf = List<int>(totalLen);
     this.reset();
   }
 
-  // Initializes a nuid with a crypto random prefix,
-  // and pseudo-random sequence and increment.
-  void reset(){
+  /// Initializes or reinitializes a nuid with a crypto random prefix,
+  /// and pseudo-random sequence and increment.
+  void reset() {
     this._setPre();
     this._initSeqAndInc();
     this._fillSeq();
   }
 
-  // Initializes the pseudo randmon sequence number and the increment range.
+  /// Initializes the pseudo randmon sequence number and the increment range.
   void _initSeqAndInc() {
-    var rng = Math.Random();
+    final rng = Math.Random();
     this.seq = (rng.nextDouble() * maxSeq).floor();
-    this.inc = rng.nextInt(maxInc-minInc) + minInc;
+    this.inc = rng.nextInt(maxInc - minInc) + minInc;
   }
 
-  // Sets the prefix from crypto random bytes. Converts to base36.
+  /// Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
-    var rs = Math.Random.secure();
+    final rs = Math.Random.secure();
     for (var i = 0; i < preLen; i++) {
-      var di = rs.nextInt(21701) % base;
+      final di = rs.nextInt(21701) % base;
       this.buf[i] = digits.codeUnitAt(di);
     }
   }
 
-  // Fills the sequence part of the nuid as base36 from this.seq.
+  /// Fills the sequence part of the nuid as base36 from this.seq.
   void _fillSeq() {
     var n = this.seq;
-    for (var i = totalLen-1; i >= preLen; i--) {
+    for (var i = totalLen - 1; i >= preLen; i--) {
       this.buf[i] = digits.codeUnitAt(n % base);
-      n = (n/base).floor();
+      n = (n / base).floor();
     }
   }
 
-  // Returns the next nuid
+  /// Returns the next [Nuid]
   String next() {
     this.seq += this.inc;
     if (this.seq > maxSeq) {
@@ -72,7 +72,8 @@ class Nuid {
     return String.fromCharCodes(this.buf);
   }
 
-  List<int> next_bytes(){
+  /// Returns the next [Nuid] as a [List<int>]
+  List<int> next_bytes() {
     this.seq += this.inc;
     if (this.seq > maxSeq) {
       this._setPre();
@@ -82,8 +83,6 @@ class Nuid {
     return this.buf;
   }
 }
-
-
 
 /* Global Nuid */
 Nuid nuid = new Nuid();

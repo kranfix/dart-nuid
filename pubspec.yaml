@@ -1,9 +1,11 @@
 name: nuid
-version: 0.7.0
+version: 0.7.1
 description: >
-  A Dart-lang implementation of NATS Unique Identifiers
+  A Dart-lang implementation of NATS (https://nats.io/) Unique Identifiers (uid)
+  inspired in node-nats (https://github.com/nats-io/node-nuid).
+  The NUID contains numbers and capital letters only, i.e. it works with base 36.
 author: Frank Moreno <frankmoreno1993@gmail.com>
-homepage: http://www.github.com/kranfix/dart-nuid
-documentation: http://www.github.com/kranfix/dart-nuid#readme
+homepage: https://www.github.com/kranfix/dart-nuid
+documentation: https://www.github.com/kranfix/dart-nuid#readme
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: ">=2.0.0 <3.0.0"
