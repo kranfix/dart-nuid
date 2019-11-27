@@ -1,5 +1,5 @@
 name: nuid
-version: 0.7.2
+version: 1.0.0
 description: >
   A Dart implementation of NATS (nats.io) Unique Identifiers (uid) inspired by
   github.com/nats-io/node-nuid.
