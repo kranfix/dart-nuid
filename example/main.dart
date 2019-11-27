@@ -17,13 +17,13 @@ void main() {
   print('\nBytes:');
   print('  First nuid:');
   for (var i = 0; i < 4; i++) {
-    print('  - ${nuid.next_bytes()}');
+    print('  - ${nuid.nextBytes()}');
   }
 
   print('  Reseting nuid:');
   nuid.reset();
 
   for (var i = 0; i < 4; i++) {
-    print('  - ${nuid.next_bytes()}');
+    print('  - ${nuid.nextBytes()}');
   }
 }

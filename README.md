@@ -32,18 +32,18 @@ void main() {
   print('\nBytes:');
   print('  First nuid:');
   for(var i = 0; i < 4; i++){
-    print('  - ${nuid.next_bytes()}');
+    print('  - ${nuid.nextBytes()}');
   }
 
   print('  Reseting nuid:');
   nuid.reset();
 
   for(var i = 0; i < 4; i++){
-    print('  - ${nuid.next_bytes()}');
+    print('  - ${nuid.nextBytes()}');
   }
 }
 ```
 
-As code above shows, there are two methods: `next` and `next_bytes`.
+As code above shows, there are two methods: `next` and `nextBytes`.
 They return the nuid in a `String` and `List<int>` format respectively.
 The lastone is designed to be compatible with `Socket` in `dart:io` library.

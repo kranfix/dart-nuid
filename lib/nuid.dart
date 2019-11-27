@@ -7,82 +7,86 @@ library nuid;
 
 import 'dart:math' as Math;
 
-const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-final List<int> b_digits = digits.runes.toList();
-const int base = 36;
-const int preLen = 12;
-const int seqLen = 10;
-const int maxSeq = 3656158440062976; // base^seqLen == 36^10
-const int minInc = 33;
-const int maxInc = 333;
-const int totalLen = preLen + seqLen;
-
 class Nuid {
-  List<int> buf;
-  num seq;
-  num inc;
+  static const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  static final List<int> b_digits = digits.runes.toList();
+  static const int base = 36;
+  static const int preLen = 12;
+  static const int seqLen = 10;
+  static const int maxSeq = 3656158440062976; // base^seqLen == 36^10
+  static const int minInc = 33;
+  static const int maxInc = 333;
+  static const int totalLen = preLen + seqLen;
+
+  List<int> _buf;
+  int seq;
+  int inc;
+
+  /// Makes a copy to keep the `_buf` inmutable
+  List<int> get buffer => _buf.toList();
+
+  /// Return the buffer as [String]
+  String get current => String.fromCharCodes(_buf);
 
   /// Create and initialize a [Nuid].
-  Nuid() {
-    this.buf = List<int>(totalLen);
+  Nuid() : _buf = List<int>(totalLen) {
     this.reset();
   }
 
   /// Initializes or reinitializes a nuid with a crypto random prefix,
   /// and pseudo-random sequence and increment.
   void reset() {
-    this._setPre();
-    this._initSeqAndInc();
-    this._fillSeq();
+    _setPre();
+    _initSeqAndInc();
+    _fillSeq();
   }
 
   /// Initializes the pseudo randmon sequence number and the increment range.
   void _initSeqAndInc() {
     final rng = Math.Random();
-    this.seq = (rng.nextDouble() * maxSeq).floor();
-    this.inc = rng.nextInt(maxInc - minInc) + minInc;
+    seq = (rng.nextDouble() * maxSeq).floor();
+    inc = rng.nextInt(maxInc - minInc) + minInc;
   }
 
   /// Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
     final rs = Math.Random.secure();
-    for (var i = 0; i < preLen; i++) {
+    for (int i = 0; i < preLen; i++) {
       final di = rs.nextInt(21701) % base;
-      this.buf[i] = digits.codeUnitAt(di);
+      _buf[i] = digits.codeUnitAt(di);
     }
   }
 
-  /// Fills the sequence part of the nuid as base36 from this.seq.
+  /// Fills the sequence part of the nuid as base36 from `seq`.
   void _fillSeq() {
     var n = this.seq;
     for (var i = totalLen - 1; i >= preLen; i--) {
-      this.buf[i] = digits.codeUnitAt(n % base);
+      _buf[i] = digits.codeUnitAt(n % base);
       n = (n / base).floor();
     }
   }
 
   /// Returns the next [Nuid]
   String next() {
-    this.seq += this.inc;
-    if (this.seq > maxSeq) {
-      this._setPre();
-      this._initSeqAndInc();
-    }
-    this._fillSeq();
-    return String.fromCharCodes(this.buf);
+    _next();
+    return current;
   }
 
   /// Returns the next [Nuid] as a [List<int>]
-  List<int> next_bytes() {
-    this.seq += this.inc;
-    if (this.seq > maxSeq) {
-      this._setPre();
-      this._initSeqAndInc();
+  List<int> nextBytes() {
+    _next();
+    return buffer;
+  }
+
+  void _next() {
+    seq += inc;
+    if (seq > maxSeq) {
+      _setPre();
+      _initSeqAndInc();
     }
-    this._fillSeq();
-    return this.buf;
+    _fillSeq();
   }
 }
 
 /* Global Nuid */
-Nuid nuid = new Nuid();
+Nuid nuid = Nuid();
