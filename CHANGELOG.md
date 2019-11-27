@@ -1,3 +1,8 @@
+# 1.0.0
+
+- Improving variables namespacing using static attributes instead of global variables.
+- Adding getter `current` and `buffer` to read the current buffer.
+
 # 0.7.0
 
 Working with `List<int>` type because of TCP protocol
