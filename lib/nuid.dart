@@ -9,7 +9,7 @@ import 'dart:math' as Math;
 
 class Nuid {
   static const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  static final List<int> b_digits = digits.runes.toList();
+  static List<int> get binaryDigits => digits.runes.toList();
   static const int base = 36;
   static const int preLen = 12;
   static const int seqLen = 10;
@@ -17,6 +17,9 @@ class Nuid {
   static const int minInc = 33;
   static const int maxInc = 333;
   static const int totalLen = preLen + seqLen;
+
+  /// Global [Nuid] instance
+  static final Nuid instance = Nuid();
 
   List<int> _buf;
   int seq;
@@ -87,6 +90,3 @@ class Nuid {
     _fillSeq();
   }
 }
-
-/* Global Nuid */
-Nuid nuid = Nuid();

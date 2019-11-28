@@ -1,6 +1,8 @@
 import 'package:nuid/nuid.dart';
 
 void main() {
+  final nuid = Nuid.instance;
+
   print('String:');
   print('  First nuid:');
   for (var i = 0; i < 4; i++) {

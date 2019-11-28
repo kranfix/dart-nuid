@@ -1,5 +1,5 @@
 name: nuid
-version: 1.0.0
+version: 1.1.0
 description: >
   A Dart implementation of NATS (nats.io) Unique Identifiers (uid) inspired by
   github.com/nats-io/node-nuid.
@@ -8,3 +8,5 @@ homepage: https://www.github.com/kranfix/dart-nuid
 documentation: https://www.github.com/kranfix/dart-nuid#readme
 environment:
   sdk: ">=2.0.0 <3.0.0"
+dev_dependencies:
+  test: ^1.9.4

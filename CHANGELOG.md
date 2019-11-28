@@ -1,3 +1,8 @@
+# 1.1.0
+
+- Improving project description
+- Adding test
+
 # 1.0.0
 
 - Improving variables namespacing using static attributes instead of global variables.
