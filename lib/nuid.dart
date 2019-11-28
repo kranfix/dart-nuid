@@ -5,7 +5,7 @@
  */
 library nuid;
 
-import 'dart:math' as Math;
+import 'dart:math' show Random;
 
 class Nuid {
   static const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -46,14 +46,14 @@ class Nuid {
 
   /// Initializes the pseudo randmon sequence number and the increment range.
   void _initSeqAndInc() {
-    final rng = Math.Random();
+    final rng = Random();
     seq = (rng.nextDouble() * maxSeq).floor();
     inc = rng.nextInt(maxInc - minInc) + minInc;
   }
 
   /// Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
-    final rs = Math.Random.secure();
+    final rs = Random.secure();
     for (int i = 0; i < preLen; i++) {
       final di = rs.nextInt(21701) % base;
       _buf[i] = digits.codeUnitAt(di);
