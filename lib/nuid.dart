@@ -32,7 +32,10 @@ class Nuid {
   String get current => String.fromCharCodes(_buf);
 
   /// Create and initialize a [Nuid].
-  Nuid() : _buf = List<int>(totalLen) {
+  Nuid()
+      : inc = 0,
+        seq = 0,
+        _buf = List<int>.filled(totalLen, 0, growable: false) {
     this.reset();
   }
 
