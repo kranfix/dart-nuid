@@ -3,9 +3,8 @@ version: 2.0.0
 description: >
   A Dart implementation of NATS (nats.io) Unique Identifiers (uid) inspired by
   github.com/nats-io/node-nuid.
-author: Frank Moreno <frankmoreno1993@gmail.com>
 homepage: https://www.github.com/kranfix/dart-nuid
-documentation: https://www.github.com/kranfix/dart-nuid#readme
+repository: https://www.github.com/kranfix/dart-nuid#readme
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
