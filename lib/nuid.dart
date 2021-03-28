@@ -8,6 +8,14 @@ library nuid;
 import 'dart:math' show Random;
 
 class Nuid {
+  /// Create and initialize a [Nuid].
+  Nuid()
+      : inc = 0,
+        seq = 0,
+        _buf = List<int>.filled(totalLen, 0, growable: false) {
+    reset();
+  }
+
   static const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   static List<int> get binaryDigits => digits.runes.toList();
   static const int base = 36;
@@ -21,7 +29,7 @@ class Nuid {
   /// Global [Nuid] instance
   static final Nuid instance = Nuid();
 
-  List<int> _buf;
+  final List<int> _buf;
   int seq;
   int inc;
 
@@ -30,14 +38,6 @@ class Nuid {
 
   /// Return the buffer as [String]
   String get current => String.fromCharCodes(_buf);
-
-  /// Create and initialize a [Nuid].
-  Nuid()
-      : inc = 0,
-        seq = 0,
-        _buf = List<int>.filled(totalLen, 0, growable: false) {
-    this.reset();
-  }
 
   /// Initializes or reinitializes a nuid with a crypto random prefix,
   /// and pseudo-random sequence and increment.
@@ -57,7 +57,7 @@ class Nuid {
   /// Sets the prefix from crypto random bytes. Converts to base36.
   void _setPre() {
     final rs = Random.secure();
-    for (int i = 0; i < preLen; i++) {
+    for (var i = 0; i < preLen; i++) {
       final di = rs.nextInt(21701) % base;
       _buf[i] = digits.codeUnitAt(di);
     }
@@ -65,7 +65,7 @@ class Nuid {
 
   /// Fills the sequence part of the nuid as base36 from `seq`.
   void _fillSeq() {
-    var n = this.seq;
+    var n = seq;
     for (var i = totalLen - 1; i >= preLen; i--) {
       _buf[i] = digits.codeUnitAt(n % base);
       n = (n / base).floor();
