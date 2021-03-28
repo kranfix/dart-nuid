@@ -1,17 +1,19 @@
 import 'package:test/test.dart';
 import 'package:nuid/nuid.dart';
 
-bool isRangeEqual(List<int> buffer1, List<int> buffer2, [int start, int end]) {
-  bool equal = true;
-  if (start == null) start = 0;
-  if (end == null) end = buffer2.length;
+bool isRangeEqual(
+  List<int> buffer1,
+  List<int> buffer2, [
+  int start = 0,
+  int? end,
+]) {
+  end ??= buffer2.length;
   for (int i = start; i < end; i++) {
     if (buffer1[i] != buffer2[i]) {
-      equal = false;
-      break;
+      return false;
     }
   }
-  return equal;
+  return true;
 }
 
 void main() {
@@ -38,10 +40,10 @@ void main() {
     }, timeout: Timeout(Duration(seconds: 1000)));
 
     test('roll seq', () {
-      final a = List<int>(10);
+      final a = List<int>.filled(10, 0, growable: false);
       a.setAll(0, nuid.buffer.getRange(12, 22));
       nuid.next();
-      final b = List<int>(10);
+      final b = List<int>.filled(10, 0, growable: false);
       b.setAll(0, nuid.buffer.getRange(12, 22));
 
       expect(isRangeEqual(a, b), isFalse);
@@ -49,10 +51,12 @@ void main() {
 
     test('roll pre', () {
       nuid.seq = 3656158440062976 + 1;
-      final a = List<int>(12);
+      final a = List<int>.filled(12, 0, growable: false);
+      ;
       a.setAll(0, nuid.buffer.getRange(0, 12));
       nuid.next();
-      final b = List<int>(12);
+      final b = List<int>.filled(12, 0, growable: false);
+      ;
       b.setAll(0, nuid.buffer.getRange(0, 12));
       expect(isRangeEqual(a, b), isFalse);
     });
