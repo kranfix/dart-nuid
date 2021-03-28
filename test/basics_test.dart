@@ -8,7 +8,7 @@ bool isRangeEqual(
   int? end,
 ]) {
   end ??= buffer2.length;
-  for (int i = start; i < end; i++) {
+  for (var i = start; i < end; i++) {
     if (buffer1[i] != buffer2[i]) {
       return false;
     }
@@ -30,34 +30,34 @@ void main() {
     });
 
     test('duplicate nuids', () {
-      final Map<String, dynamic> m = {};
+      final m = <String, dynamic>{};
       // make this really big when testing, for normal runs small
-      for (int i = 0; i < 10000; i++) {
-        final String k = nuid.next();
+      for (var i = 0; i < 10000; i++) {
+        final k = nuid.next();
         expect(m[k], isNull);
         m[k] = true;
       }
-    }, timeout: Timeout(Duration(seconds: 1000)));
+    }, timeout: const Timeout(Duration(seconds: 1000)));
 
     test('roll seq', () {
-      final a = List<int>.filled(10, 0, growable: false);
-      a.setAll(0, nuid.buffer.getRange(12, 22));
+      final a = List<int>.filled(10, 0, growable: false)
+        ..setAll(0, nuid.buffer.getRange(12, 22));
       nuid.next();
-      final b = List<int>.filled(10, 0, growable: false);
-      b.setAll(0, nuid.buffer.getRange(12, 22));
 
+      final b = List<int>.filled(10, 0, growable: false)
+        ..setAll(0, nuid.buffer.getRange(12, 22));
       expect(isRangeEqual(a, b), isFalse);
     });
 
     test('roll pre', () {
       nuid.seq = 3656158440062976 + 1;
-      final a = List<int>.filled(12, 0, growable: false);
-      ;
-      a.setAll(0, nuid.buffer.getRange(0, 12));
+      final a = List<int>.filled(12, 0, growable: false)
+        ..setAll(0, nuid.buffer.getRange(0, 12));
+
       nuid.next();
-      final b = List<int>.filled(12, 0, growable: false);
-      ;
-      b.setAll(0, nuid.buffer.getRange(0, 12));
+
+      final b = List<int>.filled(12, 0, growable: false)
+        ..setAll(0, nuid.buffer.getRange(0, 12));
       expect(isRangeEqual(a, b), isFalse);
     });
 
