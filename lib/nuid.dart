@@ -7,6 +7,45 @@ library nuid;
 
 import 'dart:math' show Random;
 
+import 'package:meta/meta.dart';
+
+/// Nuid means NATS UID
+///
+/// NATS is a communication protocol and need an optimized way to generate
+/// UIDs for the protocol.
+///
+/// The [Nuid] is an implementation of the `NUID` algorithm based of
+/// the Node.js nuid package
+///
+/// ```dart
+/// final nuid = Nuid.instance;
+///
+/// print('String:');
+/// print('  First nuid:');
+/// for (var i = 0; i < 4; i++) {
+///   print('  - ${nuid.next()}');
+/// }
+///
+/// print('  Reseting nuid:');
+/// nuid.reset();
+///
+/// for (var i = 0; i < 4; i++) {
+///   print('  - ${nuid.next()}');
+/// }
+///
+/// print('\nBytes:');
+/// print('  First nuid:');
+/// for (var i = 0; i < 4; i++) {
+///   print('  - ${nuid.nextBytes()}');
+/// }
+///
+/// print('  Reseting nuid:');
+/// nuid.reset();
+///
+/// for (var i = 0; i < 4; i++) {
+///   print('  - ${nuid.nextBytes()}');
+/// }
+/// ```
 class Nuid {
   /// Create and initialize a [Nuid].
   Nuid()
@@ -16,21 +55,45 @@ class Nuid {
     reset();
   }
 
+  /// Valid digits for Nuid (base36)
   static const String digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  /// `digits` in [List<int>] format (i.e. as char array)
   static List<int> get binaryDigits => digits.runes.toList();
+
+  /// Number of possible digits for an [Nuid]
   static const int base = 36;
+
+  /// Number of static prefix of the [Nuid]
   static const int preLen = 12;
+
+  /// Number of variable suffix of the [Nuid]
   static const int seqLen = 10;
+
+  /// Maximum value for `seq`
   static const int maxSeq = 3656158440062976; // base^seqLen == 36^10
+
+  /// Minimum value for `inc`
   static const int minInc = 33;
+
+  /// Maximum value for `inc`
   static const int maxInc = 333;
+
+  /// Length of a [Nuid]
   static const int totalLen = preLen + seqLen;
 
   /// Global [Nuid] instance
   static final Nuid instance = Nuid();
 
   final List<int> _buf;
+
+  /// Initial value for generation of a sequence of bytes that increments
+  /// in each step based on `inc`.
   int seq;
+
+  /// A random number between `minInc` and `maxInc` for incrementing `seq`
+  /// for the `next` generation.
+  @visibleForTesting
   int inc;
 
   /// Makes a copy to keep the `_buf` inmutable
