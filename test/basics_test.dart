@@ -1,3 +1,4 @@
+import 'package:nuid/src/seq_inc.dart';
 import 'package:test/test.dart';
 import 'package:nuid/nuid.dart';
 
@@ -24,9 +25,6 @@ void main() {
       expect(nuid, isNotNull);
       expect(nuid.buffer, isNotNull);
       expect(nuid.buffer.length, greaterThan(0));
-      expect(nuid.seq, isNotNull);
-      expect(nuid.seq, greaterThan(0));
-      expect(nuid.inc, isNotNull);
     });
 
     test('duplicate nuids', () {
@@ -50,14 +48,12 @@ void main() {
     });
 
     test('roll pre', () {
-      nuid.seq = 3656158440062976 + 1;
-      final a = List<int>.filled(12, 0, growable: false)
-        ..setAll(0, nuid.buffer.getRange(0, 12));
+      final nuid = Nuid(const SeqInc(SeqInc.maxSeq, 300));
+      final a = List<int>.from(nuid.buffer.getRange(0, 12));
 
       nuid.next();
 
-      final b = List<int>.filled(12, 0, growable: false)
-        ..setAll(0, nuid.buffer.getRange(0, 12));
+      final b = List<int>.from(nuid.buffer.getRange(0, 12));
       expect(isRangeEqual(a, b), isFalse);
     });
 
