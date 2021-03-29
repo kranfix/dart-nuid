@@ -6,8 +6,7 @@
 library nuid;
 
 import 'dart:math' show Random;
-
-import 'package:meta/meta.dart';
+import 'src/seq_inc.dart';
 
 /// Nuid means NATS UID
 ///
@@ -48,11 +47,10 @@ import 'package:meta/meta.dart';
 /// ```
 class Nuid {
   /// Create and initialize a [Nuid].
-  Nuid()
-      : inc = 0,
-        seq = 0,
+  Nuid([SeqInc? seqInc])
+      : _seqInc = seqInc ?? SeqInc.random(),
         _buf = List<int>.filled(totalLen, 0, growable: false) {
-    reset();
+    reset(false);
   }
 
   /// Valid digits for Nuid (base36)
@@ -70,15 +68,6 @@ class Nuid {
   /// Number of variable suffix of the [Nuid]
   static const int seqLen = 10;
 
-  /// Maximum value for `seq`
-  static const int maxSeq = 3656158440062976; // base^seqLen == 36^10
-
-  /// Minimum value for `inc`
-  static const int minInc = 33;
-
-  /// Maximum value for `inc`
-  static const int maxInc = 333;
-
   /// Length of a [Nuid]
   static const int totalLen = preLen + seqLen;
 
@@ -87,14 +76,7 @@ class Nuid {
 
   final List<int> _buf;
 
-  /// Initial value for generation of a sequence of bytes that increments
-  /// in each step based on `inc`.
-  int seq;
-
-  /// A random number between `minInc` and `maxInc` for incrementing `seq`
-  /// for the `next` generation.
-  @visibleForTesting
-  int inc;
+  SeqInc _seqInc;
 
   /// Makes a copy to keep the `_buf` inmutable
   List<int> get buffer => _buf.toList();
@@ -104,17 +86,10 @@ class Nuid {
 
   /// Initializes or reinitializes a nuid with a crypto random prefix,
   /// and pseudo-random sequence and increment.
-  void reset() {
+  void reset([bool seqInc = true]) {
     _setPre();
-    _initSeqAndInc();
-    _fillSeq();
-  }
-
-  /// Initializes the pseudo randmon sequence number and the increment range.
-  void _initSeqAndInc() {
-    final rng = Random();
-    seq = (rng.nextDouble() * maxSeq).floor();
-    inc = rng.nextInt(maxInc - minInc) + minInc;
+    if (seqInc) _seqInc = SeqInc.random();
+    _fillSeq(_seqInc.seq);
   }
 
   /// Sets the prefix from crypto random bytes. Converts to base36.
@@ -127,8 +102,7 @@ class Nuid {
   }
 
   /// Fills the sequence part of the nuid as base36 from `seq`.
-  void _fillSeq() {
-    var n = seq;
+  void _fillSeq(int n) {
     for (var i = totalLen - 1; i >= preLen; i--) {
       _buf[i] = digits.codeUnitAt(n % base);
       n = (n / base).floor();
@@ -148,11 +122,7 @@ class Nuid {
   }
 
   void _next() {
-    seq += inc;
-    if (seq > maxSeq) {
-      _setPre();
-      _initSeqAndInc();
-    }
-    _fillSeq();
+    _seqInc = _seqInc.next(_setPre);
+    _fillSeq(_seqInc.seq);
   }
 }

@@ -1,3 +1,7 @@
+# 2.1.0
+
+- Refactoring for getting full coverage
+
 # 2.0.0
 
 - Migrating to null-safety
