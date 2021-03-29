@@ -66,4 +66,18 @@ void main() {
       expect(isRangeEqual(a, b, 12), isFalse);
     });
   });
+
+  group('bytes', () {
+    test('binaryDigits', () {
+      for (var i = 0; i < Nuid.binaryDigits.length; i++) {
+        expect(Nuid.binaryDigits[i], Nuid.digits.codeUnitAt(i));
+      }
+    });
+
+    test('description', () {
+      final nuid = Nuid();
+      final bytes = nuid.nextBytes();
+      expect(bytes, nuid.buffer);
+    });
+  });
 }
